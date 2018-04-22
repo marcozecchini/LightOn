@@ -6,6 +6,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceActivity;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -17,8 +18,10 @@ import com.estimote.proximity_sdk.proximity.ProximityObserverBuilder;
 import com.estimote.proximity_sdk.proximity.ProximityZone;
 import com.estimote.proximity_sdk.trigger.ProximityTriggerBuilder;
 
+import cz.msebera.android.httpclient.Header;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import com.loopj.android.http.*;
 
 public class NotificationsManager {
 
@@ -27,6 +30,7 @@ public class NotificationsManager {
     private Notification helloNotification;
     private Notification goodbyeNotification;
     private int notificationId = 1;
+    private final AsyncHttpClient client = new AsyncHttpClient();
 
     public NotificationsManager(Context context) {
         this.context = context;
@@ -71,16 +75,40 @@ public class NotificationsManager {
                 .withOnEnterAction(new Function1<ProximityAttachment, Unit>() {
                     @Override
                     public Unit invoke(ProximityAttachment attachment) {
-                        //TODO send a message to the raspberry/MQTT broker
                         notificationManager.notify(notificationId, helloNotification);
+                        RequestParams params = new RequestParams("single", "value"); //TODO look on raspberry
+                        client.post("192.168.1.7", params, new AsyncHttpResponseHandler() {
+
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                return;
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                return;
+                            }
+                        });
                         return null;
                     }
                 })
                 .withOnExitAction(new Function1<ProximityAttachment, Unit>() {
                     @Override
                     public Unit invoke(ProximityAttachment attachment) {
-                        //TODO send a message to the raspberry/MQTT broker
                         notificationManager.notify(notificationId, goodbyeNotification);
+                        RequestParams params = new RequestParams("single", "value"); //TODO look on raspberry
+                        client.post("192.168.1.7", params, new AsyncHttpResponseHandler() {
+
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                return;
+                            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                return;
+                            }
+                        });
                         return null;
                     }
                 })
