@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.preference.PreferenceActivity;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import com.estimote.internal_plugins_api.cloud.proximity.ProximityAttachment;
 import com.estimote.notification.MainActivity;
@@ -31,6 +33,7 @@ public class NotificationsManager {
     private Notification goodbyeNotification;
     private int notificationId = 1;
     private final AsyncHttpClient client = new AsyncHttpClient();
+    private final String BASE_URL = "http://192.168.1.7:8080/rest/items/Ciabatta";
 
     public NotificationsManager(Context context) {
         this.context = context;
@@ -76,16 +79,20 @@ public class NotificationsManager {
                     @Override
                     public Unit invoke(ProximityAttachment attachment) {
                         notificationManager.notify(notificationId, helloNotification);
-                        RequestParams params = new RequestParams("single", "value"); //TODO look on raspberry
-                        client.post("192.168.1.7", params, new AsyncHttpResponseHandler() {
+                        RequestParams params = new RequestParams("", "ON");
+                        client.post(BASE_URL, params, new AsyncHttpResponseHandler() {
 
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                Toast toast = Toast.makeText(context, "SUCCESS!", Toast.LENGTH_LONG);
+                                toast.show();
                                 return;
                             }
 
                             @Override
                             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                Toast toast = Toast.makeText(context, "FAILED!", Toast.LENGTH_LONG);
+                                toast.show();
                                 return;
                             }
                         });
@@ -96,16 +103,20 @@ public class NotificationsManager {
                     @Override
                     public Unit invoke(ProximityAttachment attachment) {
                         notificationManager.notify(notificationId, goodbyeNotification);
-                        RequestParams params = new RequestParams("single", "value"); //TODO look on raspberry
-                        client.post("192.168.1.7", params, new AsyncHttpResponseHandler() {
+                        RequestParams params = new RequestParams("", "OFF");
+                        client.post(BASE_URL, params, new AsyncHttpResponseHandler() {
 
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                Toast toast = Toast.makeText(context, "SUCCESS!", Toast.LENGTH_LONG);
+                                toast.show();
                                 return;
                             }
 
                             @Override
                             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                Toast toast = Toast.makeText(context, "FAILED!", Toast.LENGTH_LONG);
+                                toast.show();
                                 return;
                             }
                         });
