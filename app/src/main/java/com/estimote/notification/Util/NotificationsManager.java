@@ -1,4 +1,4 @@
-package com.estimote.notification.estimote;
+package com.estimote.notification.Util;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -6,10 +6,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.preference.PreferenceActivity;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.Gravity;
 import android.widget.Toast;
 
 import com.estimote.internal_plugins_api.cloud.proximity.ProximityAttachment;
@@ -18,13 +16,11 @@ import com.estimote.notification.MyApplication;
 import com.estimote.proximity_sdk.proximity.ProximityObserver;
 import com.estimote.proximity_sdk.proximity.ProximityObserverBuilder;
 import com.estimote.proximity_sdk.proximity.ProximityZone;
-import com.estimote.proximity_sdk.trigger.ProximityTriggerBuilder;
 
 import cz.msebera.android.httpclient.Header;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import com.loopj.android.http.*;
-
 public class NotificationsManager {
 
     private Context context;
@@ -33,7 +29,8 @@ public class NotificationsManager {
     private Notification goodbyeNotification;
     private int notificationId = 1;
     private final AsyncHttpClient client = new AsyncHttpClient();
-    private final String BASE_URL = "http://192.168.1.7:8080/rest/items/Ciabatta";
+    private final String BASE_URL_ON = "http://192.168.1.7:5000/server/Ciabatta/ON";
+    private final String BASE_URL_OFF = "http://192.168.1.7:5000/server/Ciabatta/OFF";
 
     public NotificationsManager(Context context) {
         this.context = context;
@@ -74,26 +71,22 @@ public class NotificationsManager {
 
         ProximityZone zone = proximityObserver.zoneBuilder()
                 .forAttachmentKeyAndValue("light-on-oxn", "example-proximity-zone")
-                .inCustomRange(1.0)
+                .inCustomRange(3.0)
                 .withOnEnterAction(new Function1<ProximityAttachment, Unit>() {
                     @Override
                     public Unit invoke(ProximityAttachment attachment) {
                         notificationManager.notify(notificationId, helloNotification);
-                        RequestParams params = new RequestParams("", "ON");
-                        client.post(BASE_URL, params, new AsyncHttpResponseHandler() {
+                        client.get(BASE_URL_ON, new AsyncHttpResponseHandler() {
 
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                                 Toast toast = Toast.makeText(context, "SUCCESS!", Toast.LENGTH_LONG);
                                 toast.show();
-                                return;
                             }
-
                             @Override
                             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                                 Toast toast = Toast.makeText(context, "FAILED!", Toast.LENGTH_LONG);
                                 toast.show();
-                                return;
                             }
                         });
                         return null;
@@ -103,21 +96,17 @@ public class NotificationsManager {
                     @Override
                     public Unit invoke(ProximityAttachment attachment) {
                         notificationManager.notify(notificationId, goodbyeNotification);
-                        RequestParams params = new RequestParams("", "OFF");
-                        client.post(BASE_URL, params, new AsyncHttpResponseHandler() {
+                        client.get(BASE_URL_OFF, new AsyncHttpResponseHandler() {
 
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                                 Toast toast = Toast.makeText(context, "SUCCESS!", Toast.LENGTH_LONG);
                                 toast.show();
-                                return;
                             }
-
                             @Override
                             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                                 Toast toast = Toast.makeText(context, "FAILED!", Toast.LENGTH_LONG);
                                 toast.show();
-                                return;
                             }
                         });
                         return null;
@@ -142,5 +131,4 @@ public class NotificationsManager {
 //                    .start();
 //        }
     }
-
 }
