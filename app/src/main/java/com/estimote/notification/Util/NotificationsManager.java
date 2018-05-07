@@ -29,8 +29,8 @@ public class NotificationsManager {
     private Notification goodbyeNotification;
     private int notificationId = 1;
     private final AsyncHttpClient client = new AsyncHttpClient();
-    private final String BASE_URL_ON = "http://192.168.1.7:5000/server/Ciabatta/ON";
-    private final String BASE_URL_OFF = "http://192.168.1.7:5000/server/Ciabatta/OFF";
+    private final String BASE_URL_ON = Costants.HOME_URL + "/server/Ciabatta/ON";
+    private final String BASE_URL_OFF = Costants.HOME_URL + "/server/Ciabatta/OFF";
 
     public NotificationsManager(Context context) {
         this.context = context;
@@ -116,19 +116,5 @@ public class NotificationsManager {
         proximityObserver.addProximityZone(zone);
         proximityObserver.start();
 
-        // on Android 8.0 and later, you can use the Proximity Trigger to trigger an intent ... or,
-        // more relevant to this example, a notification ... even if the app is killed!
-        //
-        // read more about it on:
-        // https://github.com/estimote/android-proximity-sdk#background-scanning-using-proximity-trigger-android-80
-
-//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-//            new ProximityTriggerBuilder(context)
-//                    .displayNotificationWhenInProximity(helloNotification)
-//                    .triggerOnlyOnce()
-//                    .withNotificationId(notificationId)
-//                    .build()
-//                    .start();
-//        }
     }
 }
